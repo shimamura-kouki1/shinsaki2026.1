@@ -1,5 +1,5 @@
 public enum MinigameResult
 {
-    Success,
+    Clear,
     Failed
 }

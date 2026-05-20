@@ -1,5 +1,6 @@
-using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,10 +16,9 @@ public class GameManager : MonoBehaviour
 
     private int _currentIndex;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
-        
+        StartGame();
     }
 
     private void StartGame()
@@ -28,17 +28,25 @@ public class GameManager : MonoBehaviour
             Debug.LogError("ミニゲームが設定されていません。");
             return;
         }
+
+        //ランダムにミニゲームを選択して開始
         _currentIndex = Random.Range(0, _miniGames.Count);
         _currentGame = _miniGames[_currentIndex];
+        _currentGame.gameObject.SetActive(true);
         _currentGame.StartGame();
+
         if (_timerCoroutine != null)
         {
             StopCoroutine(_timerCoroutine);
         }
+
+        _currentGame.OnGameFinished += HandleGameFinished;
+
+        // 制限時間のカウントダウンを開始
         _timerCoroutine = StartCoroutine(GameTimer());
     }
 
-    private IEnumerator<GameObject> GameTimer()
+    private IEnumerator GameTimer()
     {
         float elapsedTime = 0f;
         while (elapsedTime < _gameTime)
@@ -53,9 +61,17 @@ public class GameManager : MonoBehaviour
     {
         if (_currentGame != null)
         {
+            _currentGame.OnGameFinished -= HandleGameFinished;
             _currentGame.EndGame();
             _currentGame = null;
         }
         StartGame(); // 次のゲームを開始
+    }
+
+    private void HandleGameFinished(MinigameResult result)
+    {
+        Debug.Log($"結果 : {result}");
+
+        EndGame();
     }
 }
