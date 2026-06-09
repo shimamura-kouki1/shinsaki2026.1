@@ -4,17 +4,24 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    // ゲームの動作時間
+    public float gameTime;
+
     [Header("ミニゲーム一覧"),SerializeField] 
     private List<BaseMinigame> _miniGames;
 
     [Header("制限時間"), SerializeField]
-    private float _gameTime = 5f;
+    private float _elapsedTime = 5f;
+
+    [SerializeField] private int _gameClearCount = 3;
 
     private BaseMinigame _currentGame;
 
     private Coroutine _timerCoroutine;
 
     private int _currentIndex;
+    private int _clearCount;
+
 
     private void Start()
     {
@@ -23,6 +30,12 @@ public class GameManager : MonoBehaviour
 
     private void StartGame()
     {
+        if (_clearCount >= _gameClearCount)
+        {
+            GameClear();
+            return;
+        }
+
         if (_miniGames.Count == 0)
         {
             Debug.LogError("ミニゲームが設定されていません。");
@@ -48,10 +61,10 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator GameTimer()
     {
-        float elapsedTime = 0f;
-        while (elapsedTime < _gameTime)
+        gameTime = 0f;
+        while (gameTime < _elapsedTime)
         {
-            elapsedTime += Time.deltaTime;
+            gameTime += Time.deltaTime;
             yield return null;
         }
         EndGame();
@@ -59,19 +72,58 @@ public class GameManager : MonoBehaviour
 
     private void EndGame()
     {
+        if(_timerCoroutine != null)
+        {
+            StopCoroutine(_timerCoroutine);
+            _timerCoroutine = null;
+        }
         if (_currentGame != null)
         {
             _currentGame.OnGameFinished -= HandleGameFinished;
             _currentGame.EndGame();
+            _currentGame.gameObject.SetActive(false);
             _currentGame = null;
         }
-        StartGame(); // 次のゲームを開始
+        Interval();
+        //StartGame(); // 次のゲームを開始
     }
 
     private void HandleGameFinished(MinigameResult result)
     {
+
+        if (result == MinigameResult.Clear)
+        {
+            _clearCount++;
+            Debug.Log($"クリア回数 : {_clearCount}");
+        }
         Debug.Log($"結果 : {result}");
 
+
+
         EndGame();
+    }
+
+    private void Interval()
+    {
+        // インターバル処理（例: 2秒待機）
+        StartCoroutine(IntervalCoroutine());
+    }
+
+    private IEnumerator IntervalCoroutine()
+    {
+        Debug.Log("インターバル開始");
+        yield return new WaitForSeconds(2f);
+        Debug.Log("インターバル終了");
+        StartGame();
+    }
+
+    private void GameClear()
+    {
+        Debug.Log("ゲームクリア！");
+    }
+
+    private void GameOver()
+    {
+        Debug.Log("ゲームオーバー！");
     }
 }

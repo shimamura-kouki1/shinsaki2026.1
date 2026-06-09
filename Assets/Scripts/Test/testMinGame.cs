@@ -10,19 +10,18 @@ public class testMinGame : BaseMinigame
     {
         _currentCount = 0;
 
-        gameObject.SetActive(true);
+        Debug.Log("ミニゲーム開始！エンターキー連打しろ！");
 
-        Debug.Log("ミニゲーム開始！シフト連打しろ！");
+        IsPlaying = true;
     }
 
     void Update()
     {
         if (!IsPlaying) return;
-
-        if (Keyboard.current.shiftKey.wasPressedThisFrame)
+        if (Keyboard.current.enterKey.wasPressedThisFrame)
         {
             _currentCount++;
-            Debug.Log("シフトを押しました！現在の回数: " + _currentCount);
+            Debug.Log("エンターキーを押しました！現在の回数: " + _currentCount);
 
             if (_currentCount >= _clearCount)
             {

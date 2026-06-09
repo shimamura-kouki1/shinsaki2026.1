@@ -10,6 +10,7 @@ public abstract class BaseMinigame : MonoBehaviour, IMinigame
     public virtual void StartGame()
     {
         IsPlaying = true;
+        Debug.Log("ミニゲーム開始！");
     }
 
     protected void Finish(MinigameResult result)
@@ -21,6 +22,5 @@ public abstract class BaseMinigame : MonoBehaviour, IMinigame
     public void EndGame()
     {
         IsPlaying = false;
-        gameObject.SetActive(false);
     }
 }
