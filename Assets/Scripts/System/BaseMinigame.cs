@@ -22,5 +22,7 @@ public abstract class BaseMinigame : MonoBehaviour, IMinigame
     public void EndGame()
     {
         IsPlaying = false;
+        OnEndGame();
     }
+    protected virtual void OnEndGame() { }
 }

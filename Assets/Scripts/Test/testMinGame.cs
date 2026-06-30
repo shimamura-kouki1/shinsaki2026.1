@@ -26,7 +26,7 @@ public class testMinGame : BaseMinigame
             if (_currentCount >= _clearCount)
             {
                 Debug.Log("ミニゲームクリア！おめでとう！");
-                Finish(MinigameResult.Clear);
+                Finish(MinigameResult.Success);
             }
         }
     }
