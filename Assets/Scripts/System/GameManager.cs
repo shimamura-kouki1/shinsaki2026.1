@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _gameClearCount = 3;
     [SerializeField] private int _life = 3;
 
+    [SerializeField] private GameUIManager _uiManager;
+
     private BaseMinigame _currentGame;
     private GameState _gameState;
 
@@ -29,6 +31,10 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        _uiManager.UpdateLife(_life);
+        _uiManager.UpdateRound(0);
+        _uiManager.UpDateTimeUI(_elapsedTime);
+
         StartCoroutine(ReadyCoroutine());
     }
 
@@ -41,8 +47,13 @@ public class GameManager : MonoBehaviour
         }
 
         _round++;
+        _uiManager.UpdateRound(_round);
 
         BeginRound();
+
+        if (!_currentGame) return;
+
+        _uiManager.ShowInstruction(_currentGame.Title, _currentGame.Description);
 
         ChangeState(GameState.Playing);
 
@@ -83,6 +94,10 @@ public class GameManager : MonoBehaviour
         while (gameTime < _elapsedTime)
         {
             gameTime += Time.deltaTime;
+
+            float remain = _elapsedTime - gameTime;
+            _uiManager.UpDateTimeUI(remain);
+
             yield return null;
         }
         HandleGameFinished(MinigameResult.Failure);
@@ -90,8 +105,15 @@ public class GameManager : MonoBehaviour
 
     private void EndGame()
     {
-       
-        if(_timerCoroutine != null)
+        StopCurrentGame();
+        _uiManager.HideInstruction();
+        Interval();
+        //StartGame(); // 次のゲームを開始
+    }
+
+    private void StopCurrentGame()
+    {
+        if (_timerCoroutine != null)
         {
             StopCoroutine(_timerCoroutine);
             _timerCoroutine = null;
@@ -103,8 +125,6 @@ public class GameManager : MonoBehaviour
             _currentGame.gameObject.SetActive(false);
             _currentGame = null;
         }
-        Interval();
-        //StartGame(); // 次のゲームを開始
     }
 
     private void HandleGameFinished(MinigameResult result)
@@ -114,11 +134,13 @@ public class GameManager : MonoBehaviour
         if (result == MinigameResult.Success)
         {
             _clearCount++;
-            Debug.Log($"クリア回数 : {_clearCount}");
+            _uiManager.ShowResult(MinigameResult.Success);
         }
         else
         {
             _life--;
+            _uiManager.UpdateLife(_life);
+            _uiManager.ShowResult(MinigameResult.Failure);
 
             if (_life <= 0)
             {
@@ -126,7 +148,6 @@ public class GameManager : MonoBehaviour
                 return;
             }
         }
-        Debug.Log($"結果 : {result}");
         EndGame();
     }
 
@@ -142,6 +163,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("インターバル開始");
         yield return new WaitForSeconds(2f);
         Debug.Log("インターバル終了");
+
         StartCoroutine(ReadyCoroutine());
     }
 
@@ -151,21 +173,23 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     private IEnumerator ReadyCoroutine()
     {
-        //ここにUIを入れる
         ChangeState(GameState.Ready);
-        Debug.Log("3");
+        _uiManager.ShowCountdown("3");
         yield return new WaitForSeconds(1f);
-        Debug.Log("2");
+        _uiManager.ShowCountdown("2");
         yield return new WaitForSeconds(1f);
-        Debug.Log("1");
+        _uiManager.ShowCountdown("1");
         yield return new WaitForSeconds(1f);
-        Debug.Log("Start");
+        _uiManager.ShowCountdown("GO");
+        yield return new WaitForSeconds(0.5f);
+        _uiManager.HideCountdown();
         StartGame();
     }
 
     private void GameClear()
     {
         ChangeState(GameState.GameClear);
+        _uiManager.ShowResult(MinigameResult.Success);
         Debug.Log("ゲームクリア！");
     }
 
@@ -176,19 +200,8 @@ public class GameManager : MonoBehaviour
     {
         ChangeState(GameState.GameOver);
 
-        if (_timerCoroutine != null)
-        {
-            StopCoroutine(_timerCoroutine);
-            _timerCoroutine = null;
-        }
-
-        if (_currentGame != null)
-        {
-            _currentGame.OnGameFinished -= HandleGameFinished;
-            _currentGame.EndGame();
-            _currentGame.gameObject.SetActive(false);
-            _currentGame = null;
-        }
+        StopCurrentGame();
+        _uiManager.ShowResult(MinigameResult.Failure);
 
         Debug.Log("ゲームオーバー！");
     }

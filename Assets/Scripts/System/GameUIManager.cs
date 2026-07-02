@@ -29,7 +29,7 @@ public class GameUIManager : MonoBehaviour
     /// ラウンドを表示
     /// </summary>
     /// <param name="round">ラウンドの</param>
-    public void UpDateRound(int round)
+    public void UpdateRound(int round)
     {
         _roundText.text = $"Round{round}";
     }
@@ -54,7 +54,7 @@ public class GameUIManager : MonoBehaviour
     /// <param name="text"></param>
     public void ShowCountdown(string text)
     {
-        if (!_countdownPanel)
+        if (!_countdownPanel.activeSelf)
         {
             _countdownPanel.SetActive(true);
         }
@@ -80,7 +80,7 @@ public class GameUIManager : MonoBehaviour
         if (!_instructionPanel)
             _instructionPanel.SetActive(true);
 
-        _timeText.text = title;
+        _titleText.text = title;
         _descriptionText.text = description;
     }
 
@@ -92,11 +92,10 @@ public class GameUIManager : MonoBehaviour
         _instructionPanel.SetActive(false);
     }
 
-    public void ShowResult(bool success)
+    public void ShowResult(MinigameResult result)
     {
-        if (!_resultPanel)
-            _resultPanel.SetActive(true);
+        _resultPanel.SetActive(true);
 
-        _resultText.text = success ? _successText : _failText;
+        _resultText.text = result == MinigameResult.Success ? _successText : _failText;
     }
 }
