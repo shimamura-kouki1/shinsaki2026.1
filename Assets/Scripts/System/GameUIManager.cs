@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using System.Collections;
 /// <summary>
 /// UIの表示と更新を行うクラス
 /// </summary>
@@ -26,6 +27,17 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private string _failText = "初めからやり直しこいや！";
 
     /// <summary>
+    /// 初期化
+    /// </summary>
+    public void Initialize()
+    {
+        _countdownPanel.SetActive(false);
+        _instructionPanel.SetActive(false);
+        _resultPanel.SetActive(false);
+    }
+
+
+    /// <summary>
     /// ラウンドを表示
     /// </summary>
     /// <param name="round">ラウンドの</param>
@@ -38,7 +50,7 @@ public class GameUIManager : MonoBehaviour
     /// タイムUI
     /// </summary>
     /// <param name="time"></param>
-    public void UpDateTimeUI(float time)
+    public void UpdateTimeUI(float time)
     {
         _timeText.text = time.ToString("F1");
     }
@@ -49,15 +61,30 @@ public class GameUIManager : MonoBehaviour
     }
 
     /// <summary>
+    /// カウントダウン処理
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator PlayCountdown()
+    {
+        for (int i = 3; i > 0; i--)
+        {
+            ShowCountdown(i.ToString());
+            yield return new WaitForSeconds(1f);
+        }
+
+        ShowCountdown("GO");
+        yield return new WaitForSeconds(0.5f);
+
+        HideCountdown();
+    }
+
+    /// <summary>
     /// カウントダウンの表示
     /// </summary>
     /// <param name="text"></param>
     public void ShowCountdown(string text)
     {
-        if (!_countdownPanel.activeSelf)
-        {
-            _countdownPanel.SetActive(true);
-        }
+        _countdownPanel.SetActive(true);
 
         _countdownText.text = text;
     }
@@ -77,8 +104,7 @@ public class GameUIManager : MonoBehaviour
     /// <param name="description"></param>
     public void ShowInstruction(string title, string description)
     {
-        if (!_instructionPanel)
-            _instructionPanel.SetActive(true);
+        _instructionPanel.SetActive(true);
 
         _titleText.text = title;
         _descriptionText.text = description;
@@ -92,10 +118,22 @@ public class GameUIManager : MonoBehaviour
         _instructionPanel.SetActive(false);
     }
 
+    /// <summary>
+    /// リザルト画面の表示
+    /// </summary>
+    /// <param name="result"></param>
     public void ShowResult(MinigameResult result)
     {
         _resultPanel.SetActive(true);
 
         _resultText.text = result == MinigameResult.Success ? _successText : _failText;
+    }
+
+    /// <summary>
+    /// リザルト画面の非表示
+    /// </summary>
+    public void HideResult()
+    {
+        _resultPanel.SetActive(false);
     }
 }

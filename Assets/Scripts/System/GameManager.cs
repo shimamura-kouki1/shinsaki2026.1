@@ -27,16 +27,21 @@ public class GameManager : MonoBehaviour
     private int _clearCount;
     private int _round;
 
+    public virtual float TimeLimit => 5f;
+
     public GameState CurrentState => _gameState;
 
     private void Start()
     {
+        _uiManager.Initialize();
+
         _uiManager.UpdateLife(_life);
         _uiManager.UpdateRound(0);
-        _uiManager.UpDateTimeUI(_elapsedTime);
+        _uiManager.UpdateTimeUI(_elapsedTime);
 
         StartCoroutine(ReadyCoroutine());
     }
+
 
     private void StartGame()
     {
@@ -88,21 +93,6 @@ public class GameManager : MonoBehaviour
         _currentGame = _miniGames[_currentIndex];
     }
 
-    private IEnumerator GameTimer()
-    {
-        gameTime = 0f;
-        while (gameTime < _elapsedTime)
-        {
-            gameTime += Time.deltaTime;
-
-            float remain = _elapsedTime - gameTime;
-            _uiManager.UpDateTimeUI(remain);
-
-            yield return null;
-        }
-        HandleGameFinished(MinigameResult.Failure);
-    }
-
     private void EndGame()
     {
         StopCurrentGame();
@@ -134,13 +124,13 @@ public class GameManager : MonoBehaviour
         if (result == MinigameResult.Success)
         {
             _clearCount++;
-            _uiManager.ShowResult(MinigameResult.Success);
+            FinishSequence(MinigameResult.Success);
         }
         else
         {
             _life--;
             _uiManager.UpdateLife(_life);
-            _uiManager.ShowResult(MinigameResult.Failure);
+            FinishSequence(MinigameResult.Failure);
 
             if (_life <= 0)
             {
@@ -158,12 +148,34 @@ public class GameManager : MonoBehaviour
         StartCoroutine(IntervalCoroutine());
     }
 
+    private IEnumerator GameTimer()
+    {
+        gameTime = 0f;
+        while (gameTime < _elapsedTime)
+        {
+            gameTime += Time.deltaTime;
+
+            float remain = _elapsedTime - gameTime;
+            _uiManager.UpdateTimeUI(remain);
+
+            yield return null;
+        }
+        HandleGameFinished(MinigameResult.Failure);
+    }
+
+    private IEnumerator FinishSequence(MinigameResult result)
+    {
+        _uiManager.ShowResult(result);
+
+        yield return new WaitForSeconds(1f);
+
+        _uiManager.HideResult();
+    }
+
     private IEnumerator IntervalCoroutine()
     {
-        Debug.Log("インターバル開始");
         yield return new WaitForSeconds(2f);
-        Debug.Log("インターバル終了");
-
+        _uiManager.HideResult();
         StartCoroutine(ReadyCoroutine());
     }
 
@@ -174,15 +186,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator ReadyCoroutine()
     {
         ChangeState(GameState.Ready);
-        _uiManager.ShowCountdown("3");
-        yield return new WaitForSeconds(1f);
-        _uiManager.ShowCountdown("2");
-        yield return new WaitForSeconds(1f);
-        _uiManager.ShowCountdown("1");
-        yield return new WaitForSeconds(1f);
-        _uiManager.ShowCountdown("GO");
-        yield return new WaitForSeconds(0.5f);
-        _uiManager.HideCountdown();
+        yield return _uiManager.PlayCountdown();
         StartGame();
     }
 
