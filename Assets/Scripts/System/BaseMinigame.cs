@@ -5,6 +5,12 @@ public abstract class BaseMinigame : MonoBehaviour, IMinigame
 {
     public event Action<MinigameResult> OnGameFinished;
 
+    /// <summary>ゲームタイトル 各ミニゲームでoverride</summary>
+    public virtual string Title => "No Title";
+
+    /// <summary>ゲーム説明</summary>
+    public virtual string Description => "";
+
     protected bool IsPlaying;
 
     public virtual void StartGame()
