@@ -16,6 +16,8 @@ public class LightsOut : BaseMinigame
 
     public override void StartGame()
     {
+        IsPlaying = true;
+
         _images = new Image[_row, _col];
         _isBlack = new bool[_row, _col];
         _answer = new Vector2Int[_shuffle];
