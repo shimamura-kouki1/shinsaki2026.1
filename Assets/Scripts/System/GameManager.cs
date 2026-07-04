@@ -124,13 +124,13 @@ public class GameManager : MonoBehaviour
         if (result == MinigameResult.Success)
         {
             _clearCount++;
-            FinishSequence(MinigameResult.Success);
+            StartCoroutine(FinishSequence(MinigameResult.Success));
         }
         else
         {
             _life--;
             _uiManager.UpdateLife(_life);
-            FinishSequence(MinigameResult.Failure);
+            StartCoroutine(FinishSequence(MinigameResult.Failure));
 
             if (_life <= 0)
             {
