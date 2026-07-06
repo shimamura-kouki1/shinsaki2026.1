@@ -144,10 +144,13 @@ public class LightsOut : BaseMinigame
     /// </summary>
     private void Shuffle()
     {
+        int maxShuffle = _row * _col;
+        int shuffleCount = Mathf.Min(_shuffle, maxShuffle);
+
         HashSet<Vector2Int> usePosition = new HashSet<Vector2Int>();
         int count = 0;
 
-        while(count < _shuffle)
+        while(count < shuffleCount)
         {
             int row = Random.Range(0, _row);
             int col = Random.Range(0, _col);
