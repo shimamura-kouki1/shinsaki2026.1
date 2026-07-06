@@ -45,6 +45,7 @@ public class GameManager : MonoBehaviour
 
     private void StartGame()
     {
+        Debug.Log("GameStart");
         if (_clearCount >= _gameClearCount)
         {
             GameClear();
@@ -95,6 +96,7 @@ public class GameManager : MonoBehaviour
 
     private void EndGame()
     {
+        Debug.Log("GameEnd");
         StopCurrentGame();
         _uiManager.HideInstruction();
         Interval();
@@ -143,6 +145,7 @@ public class GameManager : MonoBehaviour
 
     private void Interval()
     {
+        Debug.Log("Interval2");
         ChangeState(GameState.Interval);
         // インターバル処理（例: 2秒待機）
         StartCoroutine(IntervalCoroutine());
