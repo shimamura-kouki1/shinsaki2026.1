@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,10 +16,27 @@ public class LightsOut : BaseMinigame
     private float _startTime;//ゲーム開始時間
     private Vector2Int[] _answer;//正解手順配列
 
+
+    private void Awake()
+    {
+        CreateCell();
+    }
+
     public override void StartGame()
     {
         IsPlaying = true;
 
+        ResetCell();
+        Shuffle();
+        Answer();
+        _startTime = Time.time;
+    }
+
+    /// <summary>
+    /// セルの生成
+    /// </summary>
+    private void CreateCell()
+    {
         _images = new Image[_row, _col];
         _isBlack = new bool[_row, _col];
         _answer = new Vector2Int[_shuffle];
@@ -46,9 +65,6 @@ public class LightsOut : BaseMinigame
                 // ここで r と c をキャプチャしているため、正しいセルがクリックされたときに正しい座標が渡されるようになります。
             }
         }
-        Shuffle();
-        Answer();
-        _startTime = Time.time;
     }
 
     /// <summary>
@@ -106,18 +122,47 @@ public class LightsOut : BaseMinigame
     }
 
     /// <summary>
+    /// セルの色をすべて
+    /// </summary>
+    private void ResetCell()
+    {
+        _clickCount = 0;
+        _answer = new Vector2Int[_shuffle];
+
+        for (int r = 0; r < _row; r++)
+        {
+            for(int c = 0; c < _col; c++)
+            {
+                _isBlack[r,c] = false;
+                _images[r,c].color = Color.white;
+            }
+        }
+    }
+
+    /// <summary>
     /// 白黒をランダムにシャッフルする
     /// </summary>
     private void Shuffle()
     {
-        for (var r = 0; r < _shuffle; r++)
+        HashSet<Vector2Int> usePosition = new HashSet<Vector2Int>();
+        int count = 0;
+
+        while(count < _shuffle)
         {
             int row = Random.Range(0, _row);
             int col = Random.Range(0, _col);
 
+            Vector2Int pos = new Vector2Int(row, col);
+
+            if (!usePosition.Add(pos))
+            {
+                continue;
+            }
+
             PushCell(row, col);
 
-            _answer[r] = new Vector2Int(row, col);//シャッフルの手順を記録
+            _answer[count] = new Vector2Int(row, col);//シャッフルの手順を記録
+            count++;
         }
     }
 

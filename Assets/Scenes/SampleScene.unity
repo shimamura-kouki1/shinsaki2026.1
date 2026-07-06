@@ -135,6 +135,10 @@ PrefabInstance:
       propertyPath: _row
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 2337848057919716982, guid: 4b7acf9dedec8f643b2fc85094656121, type: 3}
+      propertyPath: _shuffle
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4258608008156869351, guid: 4b7acf9dedec8f643b2fc85094656121, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -214,6 +218,14 @@ PrefabInstance:
     - target: {fileID: 4258608008156869351, guid: 4b7acf9dedec8f643b2fc85094656121, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5513877470010200558, guid: 4b7acf9dedec8f643b2fc85094656121, type: 3}
+      propertyPath: m_Spacing.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 5513877470010200558, guid: 4b7acf9dedec8f643b2fc85094656121, type: 3}
+      propertyPath: m_Spacing.y
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 5513877470010200558, guid: 4b7acf9dedec8f643b2fc85094656121, type: 3}
       propertyPath: m_ConstraintCount
@@ -1211,8 +1223,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameTime: 10
   _miniGames:
-  - {fileID: 1979165170}
   - {fileID: 235778248}
+  - {fileID: 1979165170}
   _elapsedTime: 5
   _gameClearCount: 3
   _life: 3
