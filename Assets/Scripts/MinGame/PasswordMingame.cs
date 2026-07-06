@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 public class PasswordMinigame : BaseMinigame
 {
-    [SerializeField] private int _passwordLength = 3;
+    [SerializeField, Min(1)] private int _passwordLength = 3;
     [SerializeField] private PasswordGameUI _gameUI;
 
     public override string Title => "パスワードを打ち込め！";
@@ -28,10 +28,18 @@ public class PasswordMinigame : BaseMinigame
     private void Update()
     {
         if (!IsPlaying) return;
-        if (!Keyboard.current.anyKey.wasPressedThisFrame)
+
+        Keyboard keyboard = Keyboard.current;
+
+        if (keyboard == null)return;
+
+        if (!keyboard.anyKey.wasPressedThisFrame)
             return;
 
-        if (Keyboard.current[_password[_currentIndex]].wasPressedThisFrame)
+        if (_currentIndex >= _password.Count)
+            return;
+
+        if (keyboard[_password[_currentIndex]].wasPressedThisFrame)
         {
             _currentIndex++;
 
