@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 
 public class CableDrag : MonoBehaviour,IPointerDownHandler,IDragHandler,IPointerUpHandler
 {
