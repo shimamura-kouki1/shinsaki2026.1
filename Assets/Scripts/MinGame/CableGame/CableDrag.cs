@@ -38,6 +38,10 @@ public class CableDrag : MonoBehaviour,IPointerDownHandler,IDragHandler,IPointer
         _isDragging = false;
 
         _cableImage.gameObject.SetActive(false);
+
+        _cableImage.sizeDelta = new Vector2(0f, _cableImage.sizeDelta.y);
+
+        _cableImage.rotation = Quaternion.identity;
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -89,7 +93,9 @@ public class CableDrag : MonoBehaviour,IPointerDownHandler,IDragHandler,IPointer
 
         Vector2 mouse = GetMousePosition();
 
-        float distance = Vector2.Distance(mouse, _endPoint.transform.position);
+        RectTransform endRect = (RectTransform)_endPoint.transform;
+
+        float distance = Vector2.Distance(mouse, endRect.position);
 
         return distance <= _connectDistance;
     }
@@ -101,7 +107,7 @@ public class CableDrag : MonoBehaviour,IPointerDownHandler,IDragHandler,IPointer
     {
         IsConnected = true;
 
-        UpdateCable(_endPoint.transform.position);
+        UpdateCable(((RectTransform)_endPoint.transform).position);
 
         OnConnected?.Invoke();
     }
@@ -116,7 +122,9 @@ public class CableDrag : MonoBehaviour,IPointerDownHandler,IDragHandler,IPointer
 
         float length = direction.magnitude;
 
-        _cableImage.position = (Vector2)_startPoint.transform.position;
+        RectTransform start =(RectTransform)_startPoint.transform;
+
+        _cableImage.position = start.position;
 
         _cableImage.sizeDelta =
            new Vector2(length, _cableImage.sizeDelta.y);
