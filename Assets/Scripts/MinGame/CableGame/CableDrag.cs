@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-public class CableDrag : MonoBehaviour,IPointerDownHandler,IDragHandler,IPointerUpHandler
+public class CableDrag : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
     public event Action OnConnected;
 
@@ -18,7 +18,7 @@ public class CableDrag : MonoBehaviour,IPointerDownHandler,IDragHandler,IPointer
     [SerializeField] private float _connectDistance = 35f;
 
     /// <summary>接続済みか</summary>
-    public bool IsConnected { get;private set;}
+    public bool IsConnected { get; private set; }
 
     private bool _isDragging;
     private RectTransform _canvasRect;
@@ -27,6 +27,13 @@ public class CableDrag : MonoBehaviour,IPointerDownHandler,IDragHandler,IPointer
     private void Awake()
     {
         _canvas = GetComponentInParent<Canvas>();
+
+        if (_canvas == null)
+        {
+            Debug.LogError($"{nameof(CableDrag)} requires a parent Canvas.", this);
+            return;
+        }
+
         _canvasRect = _canvas.GetComponent<RectTransform>();
 
         ResetCable();
@@ -48,7 +55,7 @@ public class CableDrag : MonoBehaviour,IPointerDownHandler,IDragHandler,IPointer
     {
         if (IsConnected) return;
 
-        _isDragging =true;
+        _isDragging = true;
 
         _cableImage.gameObject.SetActive(true);
         UpdateCable(GetMousePosition());
@@ -70,7 +77,7 @@ public class CableDrag : MonoBehaviour,IPointerDownHandler,IDragHandler,IPointer
     {
         if (!_isDragging) return;
 
-        _isDragging=false;
+        _isDragging = false;
 
         if (CanConnect())
         {
@@ -89,7 +96,7 @@ public class CableDrag : MonoBehaviour,IPointerDownHandler,IDragHandler,IPointer
     /// <returns></returns>
     private bool CanConnect()
     {
-        if(_startPoint.Color != _endPoint.Color) return false;
+        if (_startPoint.Color != _endPoint.Color) return false;
 
         Vector2 mouse = GetMousePosition();
 
@@ -122,7 +129,7 @@ public class CableDrag : MonoBehaviour,IPointerDownHandler,IDragHandler,IPointer
 
         float length = direction.magnitude;
 
-        RectTransform start =(RectTransform)_startPoint.transform;
+        RectTransform start = (RectTransform)_startPoint.transform;
 
         _cableImage.position = start.position;
 
