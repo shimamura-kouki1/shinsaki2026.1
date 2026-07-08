@@ -10,6 +10,9 @@ public class ConnectionGauge : MonoBehaviour
 
     private float _currentValue;
 
+    public float MaxValue => _maxValue;
+    public float Ratio => _currentValue / _maxValue;
+
     /// <summary>現在の接続率</summary>
     public float CurrentValue => _currentValue;
 

@@ -440,6 +440,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moveSpeed: 250
+  _changeMinTime: 1.5
+  _changeMaxTime: 3
+  _autoSpeed: 100
   _moveRange: 300
 --- !u!1 &555323801
 GameObject:
@@ -1040,6 +1043,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1027883139}
   - component: {fileID: 1027883140}
+  - component: {fileID: 1027883141}
   m_Layer: 5
   m_Name: ConnectionSlider
   m_TagString: Untagged
@@ -1114,12 +1118,27 @@ MonoBehaviour:
   m_HandleRect: {fileID: 386758373}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 100
+  m_MaxValue: 1
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1027883141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1027883138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3206a157796758c4c80f001b066e9b25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxValue: 100
+  _increaseSpeed: 20
+  _decreaseSpeed: 15
 --- !u!1 &1260017735
 GameObject:
   m_ObjectHideFlags: 0
@@ -1131,6 +1150,8 @@ GameObject:
   - component: {fileID: 1260017736}
   - component: {fileID: 1260017738}
   - component: {fileID: 1260017737}
+  - component: {fileID: 1260017740}
+  - component: {fileID: 1260017739}
   m_Layer: 5
   m_Name: ConnectionMinigame
   m_TagString: Untagged
@@ -1200,6 +1221,40 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1260017735}
   m_CullTransparentMesh: 1
+--- !u!114 &1260017739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1260017735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e07e980c62482364ea011cd97bbf901c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _slider: {fileID: 1027883140}
+  _fillImage: {fileID: 937601002}
+  _connectionRateText: {fileID: 851602671}
+  _statusText: {fileID: 894374587}
+  _warningPanel: {fileID: 555323803}
+--- !u!114 &1260017740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1260017735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 561a052d8a63f074ebc191d66c9c1a76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cursor: {fileID: 532376873}
+  _gauge: {fileID: 1027883141}
+  _ui: {fileID: 1260017739}
+  _safeZone: {fileID: 972847048}
+  _safeRange: 60
 --- !u!1 &1422213645
 GameObject:
   m_ObjectHideFlags: 0
