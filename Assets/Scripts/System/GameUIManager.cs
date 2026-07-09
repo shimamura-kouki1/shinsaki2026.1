@@ -1,6 +1,8 @@
 using TMPro;
 using UnityEngine;
 using System.Collections;
+using DG.Tweening;
+
 /// <summary>
 /// UIの表示と更新を行うクラス
 /// </summary>
@@ -87,6 +89,11 @@ public class GameUIManager : MonoBehaviour
         _countdownPanel.SetActive(true);
 
         _countdownText.text = text;
+
+        _countdownText.transform.localScale = Vector3.zero;
+
+        _countdownText.transform.DOScale(1.3f, 0.25f).SetEase(Ease.OutBack);
+
     }
 
     /// <summary>
@@ -126,7 +133,8 @@ public class GameUIManager : MonoBehaviour
     {
         _resultPanel.SetActive(true);
 
-        _resultText.text = result == MinigameResult.Success ? _successText : _failText;
+        _resultText.text = result == MinigameResult.Success ? _successText : _failText; 
+        _resultText.color = result == MinigameResult.Success ? Color.green: Color.red;
     }
 
     /// <summary>
