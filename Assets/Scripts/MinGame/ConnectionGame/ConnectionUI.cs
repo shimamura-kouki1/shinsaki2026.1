@@ -15,9 +15,9 @@ public class ConnectionUI : MonoBehaviour
     /// <summary>
     /// UIを初期化
     /// </summary>
-    public void ResetUI()
+    public void ResetUI(float maxValue)
     {
-        UpDateGauge(0f, 100f);
+        UpDateGauge(0f, maxValue);
         SetStatus("接続中...");
         HideWarning();
     }
@@ -30,7 +30,7 @@ public class ConnectionUI : MonoBehaviour
         float ratio = current / max;
 
         _slider.value = ratio;
-        _connectionRateText.text = $"接続率{(int)current}%";
+        _connectionRateText.text = $"通信不安定 {(int)(ratio * 100)}%";
 
         UpdateGaugeColors(ratio);
     }
@@ -42,7 +42,7 @@ public class ConnectionUI : MonoBehaviour
     {
         if(ratio < 0.3f)
         {
-            _fillImage.color = Color.red;
+            _fillImage.color = Color.green;
         }
         else if (ratio < 0.7f)
         {
@@ -50,7 +50,7 @@ public class ConnectionUI : MonoBehaviour
         }
         else
         {
-            _fillImage.color = Color.green;
+            _fillImage.color = Color.red;
         }
     }
 
@@ -68,7 +68,7 @@ public class ConnectionUI : MonoBehaviour
     public void ShowWarning()
     {
         Color color = _warningPanel.color;
-        color.a = 0.3f;
+        color.a = Mathf.PingPong(Time.time * 3f, 0.3f);
         _warningPanel.color = color;
     }
 

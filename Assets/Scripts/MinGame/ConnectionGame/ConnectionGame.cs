@@ -13,13 +13,10 @@ public class ConnectionGame : BaseMinigame
     [SerializeField] private float _safeRange = 60f;
 
     [SerializeField,Tooltip("BaseMinigameのTimeLimitを超えないように注意")] private float _surviveTime = 5f;
+    [SerializeField] private float _warningRate = 0.8f;
 
     private float _timer;
 
-    private void Start()
-    {
-        StartGame();
-    }
 
     public override void StartGame()
     {
@@ -28,7 +25,7 @@ public class ConnectionGame : BaseMinigame
         _timer = 0f;
         _cursor.ResetPosition();
         _gauge.ResetGauge();
-        _ui.ResetUI();
+        _ui.ResetUI(_gauge.DisconnectLimit);
     }
 
     private void Update()
@@ -68,12 +65,12 @@ public class ConnectionGame : BaseMinigame
         //---------------------------------
         // UI更新
         //---------------------------------
-        _ui.UpDateGauge(_gauge.CurrentValue, _gauge.MaxValue);
+        _ui.UpDateGauge(_gauge.CurrentTime, _gauge.DisconnectLimit);
 
         //---------------------------------
         // 警告
         //---------------------------------
-        if (_gauge.CurrentValue <= 20)
+        if (_gauge.Ratio >= _warningRate)
         {
             _ui.ShowWarning();
         }
@@ -82,12 +79,10 @@ public class ConnectionGame : BaseMinigame
             _ui.HideWarning();
         }
 
-        //---------------------------------
-        // クリア判定
-        //---------------------------------
+        // 失敗判定
         if (_gauge.IsDisconnected)
         {
-            Debug.Log("クリア");
+            Debug.Log("通信切断");
             _ui.SetStatus("通信切断");
             Finish(MinigameResult.Failure);
         }
@@ -95,10 +90,12 @@ public class ConnectionGame : BaseMinigame
 
     private bool IsInSafeZone()
     {
-        float cursorX = _cursor._positionX;
+        float cursorX = _cursor.PositionX;
         float safeCenter = _safeZone.anchoredPosition.x;
 
-        return Mathf.Abs(cursorX - safeCenter) <= _safeRange;
+        float halfWidth = _safeZone.rect.width * 0.5f;
+
+        return Mathf.Abs(cursorX - safeCenter) <= halfWidth;
     }
 
     protected override void OnEndGame()

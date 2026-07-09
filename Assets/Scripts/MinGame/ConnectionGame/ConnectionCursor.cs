@@ -24,17 +24,11 @@ public class ConnectionCursor : MonoBehaviour
 
     private RectTransform _rectTransform;
 
-    public float _positionX => _rectTransform.anchoredPosition.x;
+    public float PositionX => _rectTransform.anchoredPosition.x;
 
     private void Awake()
     {
         _rectTransform = GetComponent<RectTransform>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        Move();
     }
 
     /// <summary>
@@ -80,6 +74,8 @@ public class ConnectionCursor : MonoBehaviour
 
         _changeTimer = 0f;
         _nextChangeTime = Random.Range(_changeMinTime, _changeMaxTime);
+
+        _currentAutoSpeed = Random.Range(_minAutoSpeed, _maxAutoSpeed);
 
         _autoDirection = Random.value < 0.5f ? -1f : 1f;
     }

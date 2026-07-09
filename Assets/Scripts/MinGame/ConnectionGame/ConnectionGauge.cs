@@ -4,25 +4,22 @@ public class ConnectionGauge : MonoBehaviour
 {
     [SerializeField] private float _disconnectLimit = 3f;
 
-    [SerializeField,Tooltip("一秒の増加割合")] private float _increaseSpeed = 20f;
+    [SerializeField,Tooltip("一秒の増加割合")] private float _increaseSpeed = 1f;
 
-    [SerializeField,Tooltip("一秒の減少割合")] private float _recoverSpeed = 15f;
+    [SerializeField,Tooltip("一秒の減少割合")] private float _recoverSpeed = 2f;
 
     private float _currentTime;
 
-    public float MaxValue => _disconnectLimit;
+    public float DisconnectLimit => _disconnectLimit;
     public float Ratio => _currentTime / _disconnectLimit;
 
     public bool IsDisconnected => _currentTime >= _disconnectLimit;
 
     /// <summary>現在の接続率</summary>
-    public float CurrentValue => _currentTime;
-
-    /// <summary>ゲージが最大か</summary>
-    public bool IsFull => _currentTime >= _disconnectLimit;
+    public float CurrentTime => _currentTime;
 
     /// <summary>
-    /// 接続率を減少
+    /// 切断ゲージを回復
     /// </summary>
     public void Recover(float deltaTime)
     {
@@ -31,7 +28,7 @@ public class ConnectionGauge : MonoBehaviour
     }
 
     /// <summary>
-    /// 接続率の増加
+    ///　切断ゲージを増加
     /// </summary>
     /// <param name="deltaTime"></param>
     public void Increase(float deltaTime)
