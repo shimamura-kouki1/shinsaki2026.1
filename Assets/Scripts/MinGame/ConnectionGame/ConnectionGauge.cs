@@ -2,30 +2,32 @@ using UnityEngine;
 
 public class ConnectionGauge : MonoBehaviour
 {
-    [SerializeField] private float _maxValue = 100f;
+    [SerializeField] private float _disconnectLimit = 3f;
 
     [SerializeField,Tooltip("一秒の増加割合")] private float _increaseSpeed = 20f;
 
-    [SerializeField,Tooltip("一秒の減少割合")] private float _decreaseSpeed = 15f;
+    [SerializeField,Tooltip("一秒の減少割合")] private float _recoverSpeed = 15f;
 
-    private float _currentValue;
+    private float _currentTime;
 
-    public float MaxValue => _maxValue;
-    public float Ratio => _currentValue / _maxValue;
+    public float MaxValue => _disconnectLimit;
+    public float Ratio => _currentTime / _disconnectLimit;
+
+    public bool IsDisconnected => _currentTime >= _disconnectLimit;
 
     /// <summary>現在の接続率</summary>
-    public float CurrentValue => _currentValue;
+    public float CurrentValue => _currentTime;
 
     /// <summary>ゲージが最大か</summary>
-    public bool IsFull => _currentValue >= _maxValue;
+    public bool IsFull => _currentTime >= _disconnectLimit;
 
     /// <summary>
     /// 接続率を減少
     /// </summary>
-    public void Decrease(float deltaTime)
+    public void Recover(float deltaTime)
     {
-        _currentValue -= _decreaseSpeed * deltaTime;
-        _currentValue = Mathf.Clamp(_currentValue, 0, _maxValue);
+        _currentTime -= _recoverSpeed * deltaTime;
+        _currentTime = Mathf.Clamp(_currentTime, 0, _disconnectLimit);
     }
 
     /// <summary>
@@ -34,8 +36,8 @@ public class ConnectionGauge : MonoBehaviour
     /// <param name="deltaTime"></param>
     public void Increase(float deltaTime)
     {
-        _currentValue += _increaseSpeed * deltaTime;
-        _currentValue = Mathf.Clamp(_currentValue, 0, _maxValue);
+        _currentTime += _increaseSpeed * deltaTime;
+        _currentTime = Mathf.Clamp(_currentTime, 0, _disconnectLimit);
     }
 
     /// <summary>
@@ -43,6 +45,6 @@ public class ConnectionGauge : MonoBehaviour
     /// </summary>
     public void ResetGauge()
     {
-        _currentValue = 0f;
+        _currentTime = 0f;
     }
 }

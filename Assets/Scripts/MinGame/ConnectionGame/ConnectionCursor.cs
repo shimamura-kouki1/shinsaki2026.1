@@ -11,8 +11,11 @@ public class ConnectionCursor : MonoBehaviour
     [SerializeField] private float _changeMaxTime = 3f;
 
     [Header("自動移動")]
-    [SerializeField] private float _autoSpeed = 150f;
     [SerializeField] private float _moveRange = 300f;
+    [SerializeField] private float _minAutoSpeed = 80f;
+    [SerializeField] private float _maxAutoSpeed = 220f;
+
+    private float _currentAutoSpeed;
 
     private float _autoDirection = 1f;
 
@@ -60,7 +63,7 @@ public class ConnectionCursor : MonoBehaviour
         Vector2 pos = _rectTransform.anchoredPosition;
 
         //自動移動
-        pos.x += _autoSpeed * _autoDirection * Time.deltaTime;
+        pos.x += _currentAutoSpeed * _autoDirection * Time.deltaTime;
         //プレイヤー移動
         pos.x += inputVector * _moveSpeed * Time.deltaTime;
         pos.x = Mathf.Clamp(pos.x,-_moveRange,_moveRange);
@@ -93,6 +96,7 @@ public class ConnectionCursor : MonoBehaviour
             _changeTimer = 0f;
 
             _nextChangeTime = Random.Range(_changeMinTime, _changeMaxTime);
+            _currentAutoSpeed = Random.Range(_minAutoSpeed, _maxAutoSpeed);
 
             _autoDirection = Random.value < 0.5f ? -1f : 1f;
         }

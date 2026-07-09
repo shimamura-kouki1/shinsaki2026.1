@@ -12,6 +12,9 @@ public class ConnectionGame : BaseMinigame
     [SerializeField] private RectTransform _safeZone;
     [SerializeField] private float _safeRange = 60f;
 
+    [SerializeField,Tooltip("BaseMinigameのTimeLimitを超えないように注意")] private float _surviveTime = 5f;
+
+    private float _timer;
 
     private void Start()
     {
@@ -22,6 +25,7 @@ public class ConnectionGame : BaseMinigame
     {
         base.StartGame();
 
+        _timer = 0f;
         _cursor.ResetPosition();
         _gauge.ResetGauge();
         _ui.ResetUI();
@@ -30,6 +34,15 @@ public class ConnectionGame : BaseMinigame
     private void Update()
     {
         if (!IsPlaying) return;
+
+        _timer += Time.deltaTime;
+
+        if (_timer >= _surviveTime)
+        {
+            _ui.SetStatus("同期完了！");
+            Finish(MinigameResult.Success);
+            return;
+        }
 
         //---------------------------------
         // カーソル移動
@@ -43,12 +56,12 @@ public class ConnectionGame : BaseMinigame
 
         if (isSafe)
         {
-            _gauge.Increase(Time.deltaTime);
+            _gauge.Recover(Time.deltaTime);
             _ui.SetStatus("通信安定");
         }
         else
         {
-            _gauge.Decrease(Time.deltaTime);
+            _gauge.Increase(Time.deltaTime);
             _ui.SetStatus("接続中...");
         }
 
@@ -72,11 +85,11 @@ public class ConnectionGame : BaseMinigame
         //---------------------------------
         // クリア判定
         //---------------------------------
-        if (_gauge.IsFull)
+        if (_gauge.IsDisconnected)
         {
             Debug.Log("クリア");
-            _ui.SetStatus("同期完了！");
-            Finish(MinigameResult.Success);
+            _ui.SetStatus("通信切断");
+            Finish(MinigameResult.Failure);
         }
     }
 
