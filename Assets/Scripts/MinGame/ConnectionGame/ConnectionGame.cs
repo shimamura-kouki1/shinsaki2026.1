@@ -15,8 +15,13 @@ public class ConnectionGame : BaseMinigame
     [SerializeField,Tooltip("BaseMinigameのTimeLimitを超えないように注意")] private float _surviveTime = 5f;
     [SerializeField] private float _warningRate = 0.8f;
 
-    private float _timer;
+    [SerializeField] private string _title;
+    [SerializeField] private string _description;
 
+    public override string Title => _title;
+    public override string Description => _description;
+
+    private float _timer;
 
     public override void StartGame()
     {
