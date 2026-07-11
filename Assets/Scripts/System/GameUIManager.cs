@@ -55,6 +55,15 @@ public class GameUIManager : MonoBehaviour
     public void UpdateTimeUI(float time)
     {
         _timeText.text = time.ToString("F1");
+
+        if (time <= 1f)
+        {
+            _timeText.color = Color.red;
+        }
+        else
+        {
+            _timeText.color = Color.white;
+        }
     }
 
     public void UpdateLife(int life)
@@ -74,7 +83,8 @@ public class GameUIManager : MonoBehaviour
             yield return new WaitForSeconds(1f);
         }
 
-        ShowCountdown("GO");
+        ShowCountdown("GO!");
+
         yield return new WaitForSeconds(0.5f);
 
         HideCountdown();
@@ -90,10 +100,23 @@ public class GameUIManager : MonoBehaviour
 
         _countdownText.text = text;
 
+        _countdownText.transform.DOKill();
         _countdownText.transform.localScale = Vector3.zero;
+        if (text == "GO!")
+        {
+            _countdownText.transform
+                .DOScale(2f, 0.35f)
+                .SetEase(Ease.OutBack)
+                .OnComplete(() =>
+                {
+                    _countdownText.transform.DOScale(1f, 0.1f);
+                });
 
-        _countdownText.transform.DOScale(1.3f, 0.25f).SetEase(Ease.OutBack);
-
+        }
+        else
+        {
+            _countdownText.transform.DOScale(1.3f, 0.25f).SetEase(Ease.OutBack);
+        }
     }
 
     /// <summary>
@@ -115,6 +138,14 @@ public class GameUIManager : MonoBehaviour
 
         _titleText.text = title;
         _descriptionText.text = description;
+
+        _instructionPanel.transform.DOKill();
+
+        _instructionPanel.transform.localScale = Vector3.zero;
+
+        _instructionPanel.transform
+            .DOScale(1f, 0.25f)
+            .SetEase(Ease.OutBack);
     }
 
     /// <summary>
@@ -135,6 +166,13 @@ public class GameUIManager : MonoBehaviour
 
         _resultText.text = result == MinigameResult.Success ? _successText : _failText; 
         _resultText.color = result == MinigameResult.Success ? Color.green: Color.red;
+
+        _resultPanel.transform.DOKill();
+        _resultPanel.transform.localScale = Vector3.zero;
+
+        _resultPanel.transform
+            .DOScale(1.2f, 0.2f)
+            .SetEase(Ease.OutBack);
     }
 
     /// <summary>

@@ -8,6 +8,13 @@ public class CableGame : BaseMinigame
     [SerializeField] private RectTransform[] _endPoints;
     [SerializeField] private GameObject _CableGameUI;
 
+    [SerializeField] private string _titleText = "線でつなげ";
+    [SerializeField] private string _descriptionText = "ドラックして同じ色をつなげろ";
+
+    public override string Title => _titleText;
+
+    public override string Description => _descriptionText;
+
     public override void StartGame()
     {
         base.StartGame();
