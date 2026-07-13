@@ -45,7 +45,7 @@ public class GameUIManager : MonoBehaviour
     /// <param name="round">ラウンドの</param>
     public void UpdateRound(int round)
     {
-        _roundText.text = $"Round{round}";
+        _roundText.text = $"Round : {round}";
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public class GameUIManager : MonoBehaviour
     /// <param name="time"></param>
     public void UpdateTimeUI(float time)
     {
-        _timeText.text = time.ToString("F1");
+        _timeText.text = $"Time : {time.ToString("F1")}"; //time.ToString("F1");
 
         if (time <= 1f)
         {

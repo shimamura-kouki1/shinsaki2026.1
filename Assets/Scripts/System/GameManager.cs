@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
     // ゲームの動作時間
     public float gameTime;
 
-    [Header("ミニゲーム一覧"),SerializeField] 
+    [Header("ミニゲーム一覧"), SerializeField]
     private List<BaseMinigame> _miniGames;
 
     [Header("制限時間"), SerializeField]
@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     private int _clearCount;
     private int _round;
 
+    private MinigameResult _lastResult;
     public virtual float TimeLimit => 5f;
 
     public GameState CurrentState => _gameState;
@@ -43,25 +44,14 @@ public class GameManager : MonoBehaviour
     }
 
 
-    private void StartGame()
+    private void StartRound()
     {
-        Debug.Log("GameStart");
-        if (_clearCount >= _gameClearCount)
-        {
-            GameClear();
-            return;
-        }
-
         _round++;
         _uiManager.UpdateRound(_round);
 
-        BeginRound();
-
         if (!_currentGame) return;
 
-        _uiManager.ShowInstruction(_currentGame.Title, _currentGame.Description);
-
-        ChangeState(GameState.Playing);
+        //ChangeState(GameState.Playing);
 
         _currentGame.gameObject.SetActive(true);
         _currentGame.StartGame();
@@ -121,18 +111,24 @@ public class GameManager : MonoBehaviour
 
     private void HandleGameFinished(MinigameResult result)
     {
-        if(_currentGame == null) return;
+        if (_currentGame == null) return;
+
+        _lastResult = result;
 
         if (result == MinigameResult.Success)
         {
             _clearCount++;
-            StartCoroutine(FinishSequence(MinigameResult.Success));
+
+            if (_clearCount >= _gameClearCount)
+            {
+                GameClear();
+                return;
+            }
         }
         else
         {
             _life--;
             _uiManager.UpdateLife(_life);
-            StartCoroutine(FinishSequence(MinigameResult.Failure));
 
             if (_life <= 0)
             {
@@ -140,6 +136,7 @@ public class GameManager : MonoBehaviour
                 return;
             }
         }
+
         EndGame();
     }
 
@@ -166,19 +163,16 @@ public class GameManager : MonoBehaviour
         HandleGameFinished(MinigameResult.Failure);
     }
 
-    private IEnumerator FinishSequence(MinigameResult result)
+    private IEnumerator IntervalCoroutine()
     {
-        _uiManager.ShowResult(result);
+        _uiManager.ShowResult(_lastResult);
 
         yield return new WaitForSeconds(1f);
 
         _uiManager.HideResult();
-    }
 
-    private IEnumerator IntervalCoroutine()
-    {
-        yield return new WaitForSeconds(2f);
-        _uiManager.HideResult();
+        yield return new WaitForSeconds(1f);
+
         StartCoroutine(ReadyCoroutine());
     }
 
@@ -189,15 +183,25 @@ public class GameManager : MonoBehaviour
     private IEnumerator ReadyCoroutine()
     {
         ChangeState(GameState.Ready);
+
+        BeginRound();
+
+        _uiManager.ShowInstruction(
+       _currentGame.Title,
+       _currentGame.Description);
+
         yield return _uiManager.PlayCountdown();
-        StartGame();
+
+        _uiManager.HideInstruction();
+
+        StartRound();
     }
 
     private void GameClear()
     {
         ChangeState(GameState.GameClear);
-        _uiManager.ShowResult(MinigameResult.Success);
-        Debug.Log("ゲームクリア！");
+        StopCurrentGame();
+        SceneLoader.LoadGameClear();
     }
 
     /// <summary>
@@ -208,16 +212,14 @@ public class GameManager : MonoBehaviour
         ChangeState(GameState.GameOver);
 
         StopCurrentGame();
-        _uiManager.ShowResult(MinigameResult.Failure);
-
-        Debug.Log("ゲームオーバー！");
+        SceneLoader.LoadGameOver();
     }
 
     private void ChangeState(GameState gameState)
     {
         if (_gameState == gameState)
-        return;
+            return;
 
-    _gameState = gameState;
+        _gameState = gameState;
     }
 }

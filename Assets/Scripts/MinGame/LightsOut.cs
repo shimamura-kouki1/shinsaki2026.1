@@ -11,6 +11,13 @@ public class LightsOut : BaseMinigame
 
     [SerializeField] private int _shuffle = 20;//シャッフル回数
 
+    [SerializeField] private string _titleText = "色を揃えろ！";
+    [SerializeField] private string _descriptionText = "LightOut！　クリックで色を変えろ";
+
+    public override string Title => _titleText;
+
+    public override string Description => _descriptionText;
+
     private int _clickCount = 0;//クリック回数
     private float _startTime;//ゲーム開始時間
     private Vector2Int[] _answer;//正解手順配列
