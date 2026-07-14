@@ -18,16 +18,21 @@ public class ConnectionGame : BaseMinigame
     [SerializeField] private string _title;
     [SerializeField] private string _description;
 
+    [SerializeField] private float _sEVolume = 0.3f;
+
     public override string Title => _title;
     public override string Description => _description;
 
     private float _timer;
+
+    private bool _warningPlayed;
 
     public override void StartGame()
     {
         base.StartGame();
 
         _timer = 0f;
+        _warningPlayed = false;
         _cursor.ResetPosition();
         _gauge.ResetGauge();
         _ui.ResetUI(_gauge.DisconnectLimit);
@@ -63,6 +68,11 @@ public class ConnectionGame : BaseMinigame
         }
         else
         {
+            if (!_warningPlayed)
+            {
+                _warningPlayed = true;
+                AudioManager.Instance.PlaySE(SENames.Warning,_sEVolume);
+            }
             _gauge.Increase(Time.deltaTime);
             _ui.SetStatus("接続中...");
         }
@@ -78,10 +88,13 @@ public class ConnectionGame : BaseMinigame
         if (_gauge.Ratio >= _warningRate)
         {
             _ui.ShowWarning();
+
+           
         }
         else
         {
             _ui.HideWarning();
+            _warningPlayed = false;
         }
 
         // 失敗判定

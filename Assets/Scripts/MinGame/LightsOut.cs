@@ -80,6 +80,8 @@ public class LightsOut : BaseMinigame
     /// <param name="col"></param>
     private void OnCellClick(int row, int col)
     {
+        AudioManager.Instance.PlaySE(SENames.PanelPush);
+
         _clickCount++;
 
         PushCell(row, col);

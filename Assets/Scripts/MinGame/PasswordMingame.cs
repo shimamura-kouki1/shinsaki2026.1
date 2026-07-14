@@ -44,6 +44,8 @@ public class PasswordMinigame : BaseMinigame
 
         if (keyboard[_password[_currentIndex]].wasPressedThisFrame)
         {
+            AudioManager.Instance.PlaySE(SENames.KeyInput);
+
             _currentIndex++;
 
             UpdatePasswordText();
@@ -55,6 +57,8 @@ public class PasswordMinigame : BaseMinigame
         }
         else
         {
+            AudioManager.Instance.PlaySE(SENames.WrongInput);
+
             Finish(MinigameResult.Failure);
         }
     }

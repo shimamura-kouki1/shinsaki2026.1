@@ -17,13 +17,17 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _life = 3;
 
     [SerializeField] private GameUIManager _uiManager;
+    [SerializeField] private float _bGMVolume = 0.4f;
 
     private BaseMinigame _currentGame;
+    // ミニゲームをランダムな順番で管理するリスト
+    private List<BaseMinigame> _shuffleGames = new();
+    // シャッフル済みリストの現在の位置
+    private int _shuffleIndex;
     private GameState _gameState;
 
     private Coroutine _timerCoroutine;
 
-    private int _currentIndex;
     private int _clearCount;
     private int _round;
 
@@ -34,11 +38,15 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        AudioManager.Instance.PlayBGM(BGMNames.InGame);
+
         _uiManager.Initialize();
 
         _uiManager.UpdateLife(_life);
         _uiManager.UpdateRound(0);
         _uiManager.UpdateTimeUI(_elapsedTime);
+
+        ShuffleMinigames();
 
         StartCoroutine(ReadyCoroutine());
     }
@@ -68,7 +76,29 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ミニゲームの選択
+    /// ミニゲーム一覧をシャッフルする
+    /// 1周するまでは同じゲームが出ない
+    /// </summary>
+    private void ShuffleMinigames()
+    {
+        // 元のリストをコピー
+        _shuffleGames = new List<BaseMinigame>(_miniGames);
+
+        // Fisher-Yatesシャッフル
+        for (int i = _shuffleGames.Count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+
+            (_shuffleGames[i], _shuffleGames[j]) =
+                (_shuffleGames[j], _shuffleGames[i]);
+        }
+
+        // 先頭から取り出せるようにインデックスをリセット
+        _shuffleIndex = 0;
+    }
+
+    /// <summary>
+    /// 次ミニゲームの選択
     /// </summary>
     private void BeginRound()
     {
@@ -79,9 +109,16 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        //ランダムにミニゲームを選択して開始
-        _currentIndex = Random.Range(0, _miniGames.Count);
-        _currentGame = _miniGames[_currentIndex];
+
+        // 全部遊び終わったらもう一度シャッフル
+        if (_shuffleIndex >= _shuffleGames.Count)
+        {
+            ShuffleMinigames();
+        }
+
+        // シャッフル済みリストから次のゲームを取得
+        _currentGame = _shuffleGames[_shuffleIndex];
+        _shuffleIndex++;
     }
 
     private void EndGame()
@@ -109,24 +146,34 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ミニゲーム終了時の処理
+    /// </summary>
     private void HandleGameFinished(MinigameResult result)
     {
         if (_currentGame == null) return;
 
         _lastResult = result;
 
+        // 成功時
         if (result == MinigameResult.Success)
         {
+            AudioManager.Instance.PlaySE(SENames.MinigameClear);
+
             _clearCount++;
 
+            // 規定回数クリアでゲームクリア
             if (_clearCount >= _gameClearCount)
             {
                 GameClear();
                 return;
             }
         }
+        // 失敗時
         else
         {
+            AudioManager.Instance.PlaySE(SENames.MinigameFailed);
+
             _life--;
             _uiManager.UpdateLife(_life);
 
@@ -148,6 +195,9 @@ public class GameManager : MonoBehaviour
         StartCoroutine(IntervalCoroutine());
     }
 
+    /// <summary>
+    /// 制限時間を管理する
+    /// </summary>
     private IEnumerator GameTimer()
     {
         gameTime = 0f;
@@ -156,10 +206,13 @@ public class GameManager : MonoBehaviour
             gameTime += Time.deltaTime;
 
             float remain = _elapsedTime - gameTime;
+            // 残り時間をUIへ反映
             _uiManager.UpdateTimeUI(remain);
 
             yield return null;
         }
+
+        // 時間切れ
         HandleGameFinished(MinigameResult.Failure);
     }
 
@@ -184,21 +237,36 @@ public class GameManager : MonoBehaviour
     {
         ChangeState(GameState.Ready);
 
+        // 次のミニゲームを選択
         BeginRound();
 
+        // ゲーム説明を表示
         _uiManager.ShowInstruction(
        _currentGame.Title,
        _currentGame.Description);
 
+        AudioManager.Instance.PlaySE(SENames.Countdown);
+
+        // カウントダウン演出
         yield return _uiManager.PlayCountdown();
+
+        //AudioManager.Instance.PlaySE(SENames.GameStart);現在SEがない
 
         _uiManager.HideInstruction();
 
+        // ミニゲーム開始
         StartRound();
     }
 
+    /// <summary>
+    /// ゲームクリア
+    /// </summary>
     private void GameClear()
     {
+        AudioManager.Instance.StopBGM();
+        AudioManager.Instance.PlaySE(SENames.GameClear);
+        AudioManager.Instance.PlayBGM(BGMNames.Result, _bGMVolume);
+
         ChangeState(GameState.GameClear);
         StopCurrentGame();
         SceneLoader.LoadGameClear();
@@ -209,6 +277,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void GameOver()
     {
+        AudioManager.Instance.StopBGM();
+        AudioManager.Instance.PlaySE(SENames.GameOver);
+        AudioManager.Instance.PlayBGM(BGMNames.Result, _bGMVolume);
+
         ChangeState(GameState.GameOver);
 
         StopCurrentGame();
