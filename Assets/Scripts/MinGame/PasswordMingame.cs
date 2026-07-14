@@ -7,9 +7,12 @@ public class PasswordMinigame : BaseMinigame
     [SerializeField, Min(1)] private int _passwordLength = 3;
     [SerializeField] private PasswordGameUI _gameUI;
 
-    public override string Title => "パスワードを打ち込め！";
+    [SerializeField] private string _titleText = "パスワードを打ち込め！";
+    [SerializeField] private string _descriptionText = "表示されたキーを順番に入力しろ";
 
-    public override string Description => "表示されたキーを順番に入力しろ";
+    public override string Title => _titleText;
+
+    public override string Description => _descriptionText;
 
     private int _currentIndex;
     private readonly List<Key> _password = new();
@@ -41,6 +44,8 @@ public class PasswordMinigame : BaseMinigame
 
         if (keyboard[_password[_currentIndex]].wasPressedThisFrame)
         {
+            AudioManager.Instance.PlaySE(SENames.KeyInput);
+
             _currentIndex++;
 
             UpdatePasswordText();
@@ -52,6 +57,8 @@ public class PasswordMinigame : BaseMinigame
         }
         else
         {
+            AudioManager.Instance.PlaySE(SENames.WrongInput);
+
             Finish(MinigameResult.Failure);
         }
     }

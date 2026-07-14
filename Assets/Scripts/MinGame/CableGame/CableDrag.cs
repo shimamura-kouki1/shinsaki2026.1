@@ -55,6 +55,8 @@ public class CableDrag : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoin
     {
         if (IsConnected) return;
 
+        AudioManager.Instance.PlaySE(SENames.CableGrab);
+
         _isDragging = true;
 
         _cableImage.gameObject.SetActive(true);
@@ -112,6 +114,8 @@ public class CableDrag : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoin
     /// </summary>
     private void Connect()
     {
+        AudioManager.Instance.PlaySE(SENames.CableConnect);
+
         IsConnected = true;
 
         UpdateCable(((RectTransform)_endPoint.transform).position);

@@ -15,14 +15,24 @@ public class ConnectionGame : BaseMinigame
     [SerializeField,Tooltip("BaseMinigameのTimeLimitを超えないように注意")] private float _surviveTime = 5f;
     [SerializeField] private float _warningRate = 0.8f;
 
+    [SerializeField] private string _title　= "セーフエリアにとどまれ！";
+    [SerializeField] private string _description = "A/D or ←/→でカーソルを操作してセーフエリアにとどまれ";
+
+    [SerializeField] private float _sEVolume = 0.3f;
+
+    public override string Title => _title;
+    public override string Description => _description;
+
     private float _timer;
 
+    private bool _warningPlayed;
 
     public override void StartGame()
     {
         base.StartGame();
 
         _timer = 0f;
+        _warningPlayed = false;
         _cursor.ResetPosition();
         _gauge.ResetGauge();
         _ui.ResetUI(_gauge.DisconnectLimit);
@@ -53,11 +63,18 @@ public class ConnectionGame : BaseMinigame
 
         if (isSafe)
         {
+            _warningPlayed = false;
+
             _gauge.Recover(Time.deltaTime);
             _ui.SetStatus("通信安定");
         }
         else
         {
+            if (!_warningPlayed)
+            {
+                _warningPlayed = true;
+                AudioManager.Instance.PlaySE(SENames.Warning,_sEVolume);
+            }
             _gauge.Increase(Time.deltaTime);
             _ui.SetStatus("接続中...");
         }
