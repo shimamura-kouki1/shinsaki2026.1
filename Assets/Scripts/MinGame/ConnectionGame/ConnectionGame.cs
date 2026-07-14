@@ -15,8 +15,8 @@ public class ConnectionGame : BaseMinigame
     [SerializeField,Tooltip("BaseMinigameのTimeLimitを超えないように注意")] private float _surviveTime = 5f;
     [SerializeField] private float _warningRate = 0.8f;
 
-    [SerializeField] private string _title;
-    [SerializeField] private string _description;
+    [SerializeField] private string _title　= "セーフエリアにとどまれ！";
+    [SerializeField] private string _description = "A/D or ←/→でカーソルを操作してセーフエリアにとどまれ";
 
     [SerializeField] private float _sEVolume = 0.3f;
 
@@ -63,6 +63,8 @@ public class ConnectionGame : BaseMinigame
 
         if (isSafe)
         {
+            _warningPlayed = false;
+
             _gauge.Recover(Time.deltaTime);
             _ui.SetStatus("通信安定");
         }
@@ -88,13 +90,10 @@ public class ConnectionGame : BaseMinigame
         if (_gauge.Ratio >= _warningRate)
         {
             _ui.ShowWarning();
-
-           
         }
         else
         {
             _ui.HideWarning();
-            _warningPlayed = false;
         }
 
         // 失敗判定

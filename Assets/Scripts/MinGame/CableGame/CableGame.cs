@@ -9,7 +9,7 @@ public class CableGame : BaseMinigame
     [SerializeField] private GameObject _CableGameUI;
 
     [SerializeField] private string _titleText = "線でつなげ";
-    [SerializeField] private string _descriptionText = "ドラックして同じ色をつなげろ";
+    [SerializeField] private string _descriptionText = "ドラッグして同じ色をつなげろ";
 
     public override string Title => _titleText;
 

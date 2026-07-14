@@ -240,6 +240,11 @@ public class GameManager : MonoBehaviour
         // 次のミニゲームを選択
         BeginRound();
 
+        if (!_currentGame)
+        {
+            yield break;
+        }
+
         // ゲーム説明を表示
         _uiManager.ShowInstruction(
        _currentGame.Title,
