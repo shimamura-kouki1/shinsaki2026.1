@@ -320,9 +320,9 @@ MonoBehaviour:
   - Name: MinigameFailed
     Clip: {fileID: 8300000, guid: b2f6fd79ce1fe524cacdcceff2d4f1f2, type: 3}
   - Name: PanelPush
-    Clip: {fileID: 8300000, guid: 00b6737966d726640a2c1a5cff29d9de, type: 3}
-  - Name: GameOver
     Clip: {fileID: 8300000, guid: f681163b599df0647961422a00e75b01, type: 3}
+  - Name: GameOver
+    Clip: {fileID: 8300000, guid: 00b6737966d726640a2c1a5cff29d9de, type: 3}
   - Name: KeyInput
     Clip: {fileID: 8300000, guid: 0682b7cf1b4c8ea4d8e8a96d0a8db217, type: 3}
   - Name: CableGrab

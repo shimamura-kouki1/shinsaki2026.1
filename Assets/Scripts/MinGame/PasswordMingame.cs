@@ -9,6 +9,7 @@ public class PasswordMinigame : BaseMinigame
 
     [SerializeField] private string _titleText = "パスワードを打ち込め！";
     [SerializeField] private string _descriptionText = "表示されたキーを順番に入力しろ";
+    [SerializeField] private float _seVolume = 1.0f;
 
     public override string Title => _titleText;
 
@@ -44,7 +45,7 @@ public class PasswordMinigame : BaseMinigame
 
         if (keyboard[_password[_currentIndex]].wasPressedThisFrame)
         {
-            AudioManager.Instance.PlaySE(SENames.KeyInput);
+            AudioManager.Instance.PlaySE(SENames.KeyInput,_seVolume);
 
             _currentIndex++;
 

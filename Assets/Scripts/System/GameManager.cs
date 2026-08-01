@@ -125,6 +125,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("GameEnd");
         StopCurrentGame();
+        _uiManager.UpdateTimeUI(_elapsedTime);
         _uiManager.HideInstruction();
         Interval();
         //StartGame(); // 次のゲームを開始

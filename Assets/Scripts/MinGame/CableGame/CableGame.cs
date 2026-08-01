@@ -59,9 +59,13 @@ public class CableGame : BaseMinigame
         {
             int random = Random.Range(i, _endPoints.Length);
 
-            Vector3 pos = _endPoints[i].position;
+            Vector2 pos = _endPoints[i].position;
 
             _endPoints[i].position = _endPoints[random].position;
+
+            _endPoints[i].anchoredPosition =
+                _endPoints[random].anchoredPosition;
+
             _endPoints[random].position = pos;
         }
     }

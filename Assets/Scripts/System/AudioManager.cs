@@ -10,7 +10,7 @@ public class AudioManager : MonoBehaviour
 
     [SerializeField] private List<AudioData> _seList;
     [SerializeField] private List<AudioData> _bgmList;
-    [SerializeField] private const float _seVolume = 0.6f;
+    [SerializeField] private const float _seVolume = 1f;
     [SerializeField] private const float _bgmVolume = 0.4f;
 
     private Dictionary<string, AudioClip> _seDictionary;
